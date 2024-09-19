@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +17,7 @@ import com.shamanshs.geoquiz.QuizViewModel.QuizViewModelFactory
 
 private const val EXTRA_ANSWER_IS_TRUE = "com.shamanshs.android.geoquiz.answer_is_true"
 const val EXTRA_ANSWER_SHOWN = "com.shamanshs.android.geoquiz.answer_shown"
+private const val KEY_INDEX = "index"
 
 class CheatActivity : AppCompatActivity() {
 
@@ -33,6 +35,9 @@ class CheatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_cheat)
+
+        val inAnswerShow = savedInstanceState?.getBoolean(KEY_INDEX,false) ?: false
+        cheatViewModel.inAnswerShow = inAnswerShow
 
         answerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false)
         answerTextView = findViewById(R.id.answer_text_view)
@@ -77,5 +82,10 @@ class CheatActivity : AppCompatActivity() {
             answerTextView.setText(answerText)
             setAnswerShowResult()
         }
+    }
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putBoolean(KEY_INDEX, cheatViewModel.inAnswerShow)
     }
 }
