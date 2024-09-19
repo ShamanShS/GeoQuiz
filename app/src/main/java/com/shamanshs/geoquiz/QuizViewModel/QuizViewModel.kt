@@ -13,7 +13,7 @@ private const val TAG = "QuizViewModel"
 class QuizViewModel() : ViewModel() {
 
 
-        private val questionBank = listOf(
+    private val questionBank = listOf(
         Question(R.string.question1_text, true),
         Question(R.string.question2_text, true),
         Question(R.string.question3_text, false),

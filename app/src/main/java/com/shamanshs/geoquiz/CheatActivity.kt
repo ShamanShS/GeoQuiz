@@ -10,6 +10,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import com.shamanshs.geoquiz.CheatViewModel.CheatViewModel
+import com.shamanshs.geoquiz.QuizViewModel.QuizViewModelFactory
 
 private const val EXTRA_ANSWER_IS_TRUE = "com.shamanshs.android.geoquiz.answer_is_true"
 const val EXTRA_ANSWER_SHOWN = "com.shamanshs.android.geoquiz.answer_shown"
@@ -21,6 +24,11 @@ class CheatActivity : AppCompatActivity() {
     private lateinit var showAnswerButton: Button
     private lateinit var answerTextView: TextView
 
+    private val cheatViewModel : CheatViewModel by lazy {
+        val factory = QuizViewModelFactory()
+        ViewModelProvider(this@CheatActivity, factory)[CheatViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,14 +39,11 @@ class CheatActivity : AppCompatActivity() {
         showAnswerButton = findViewById(R.id.show_answer_button)
 
         showAnswerButton.setOnClickListener{
-            val answerText = when {
-                answerIsTrue -> R.string.true_button
-                else -> R.string.false_button
-            }
-            answerTextView.setText(answerText)
-            setAnswerShowResult(true)
+            cheatViewModel.inAnswerShow = true
+            updateAnswer()
         }
 
+        updateAnswer()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -46,6 +51,7 @@ class CheatActivity : AppCompatActivity() {
             insets
         }
     }
+
 
     companion object {
         fun newIntent(packageContext: Context, answerIsTrue: Boolean): Intent {
@@ -55,10 +61,21 @@ class CheatActivity : AppCompatActivity() {
         }
     }
 
-    private fun setAnswerShowResult(inAnswerShow: Boolean) {
+    private fun setAnswerShowResult() {
         val data = Intent().apply {
-            putExtra(EXTRA_ANSWER_SHOWN, inAnswerShow)
+            putExtra(EXTRA_ANSWER_SHOWN, cheatViewModel.inAnswerShow)
         }
         setResult(Activity.RESULT_OK, data)
+    }
+
+    private fun updateAnswer() {
+        if (cheatViewModel.inAnswerShow){
+            val answerText = when {
+                answerIsTrue -> R.string.true_button
+                else -> R.string.false_button
+            }
+            answerTextView.setText(answerText)
+            setAnswerShowResult()
+        }
     }
 }
