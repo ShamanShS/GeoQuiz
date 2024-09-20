@@ -24,7 +24,7 @@ class QuizViewModel() : ViewModel() {
     var answerUserBank: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0 ,0)
 
     var currentIndex = 0
-    var isCheater = false
+    var isCheater = 3
 
     val currentQuestionAnswer: Boolean
         get() = questionBank[currentIndex].answer

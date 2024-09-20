@@ -13,7 +13,8 @@
     <string name="cheat_button">Cheat!</string>
     <string name="judgment_toast">Cheating is wrong.</string>
 
-    <string name="sdk_number">SDK number </string>
+    <string name="api_level">API level </string>
+    <string name="hunts">Hunts</string>
 
     <string name="true_button">True</string>
     <string name="false_button">False</string>

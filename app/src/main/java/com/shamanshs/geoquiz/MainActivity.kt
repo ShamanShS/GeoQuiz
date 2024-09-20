@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var backButton: Button
     private lateinit var cheatButton: Button
     private lateinit var questionTextView: TextView
+    private lateinit var cheatNumberTextView: TextView
 
     private val quizViewModel : QuizViewModel by lazy {
         val factory = QuizViewModelFactory()
@@ -38,8 +39,18 @@ class MainActivity : AppCompatActivity() {
 
     private val getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if(result.resultCode == RESULT_OK) {
-            quizViewModel.isCheater =
-                result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+            if (result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) == true) {
+                quizViewModel.isCheater -= 1
+                val text = quizViewModel.isCheater.toString() + " hunts"
+                cheatNumberTextView.text = text
+            }
+//             when {
+//                result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false -> {
+//                    quizViewModel.isCheater -= 1
+//                }
+//                else -> +0
+//            }
+
         }
     }
 
@@ -60,8 +71,9 @@ class MainActivity : AppCompatActivity() {
         backButton = findViewById(R.id.backButton)
         cheatButton = findViewById(R.id.cheat_button)
         questionTextView = findViewById(R.id.questionTextView)
+        cheatNumberTextView = findViewById(R.id.cheat_number_textView)
 
-
+        cheatNumberTextView.append(quizViewModel.isCheater.toString() + " hunts")
         trueButton.setOnClickListener { view: View ->
             if (quizViewModel.checkThisAnswer()) {
                 checkAnswer(true)
@@ -87,11 +99,19 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
         }
         cheatButton.setOnClickListener{ view: View ->
-            val answerIsTrue = quizViewModel.currentQuestionAnswer
-            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
-            val options = ActivityOptionsCompat.makeClipRevealAnimation(view, 0, 0, view.width, view.height)
+            if (quizViewModel.isCheater > 0) {
+                val answerIsTrue = quizViewModel.currentQuestionAnswer
+                val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+                val options = ActivityOptionsCompat.makeClipRevealAnimation(
+                    view,
+                    0,
+                    0,
+                    view.width,
+                    view.height
+                )
 //            if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.M) проверка на версию SDK
-            getResult.launch(intent, options)
+                getResult.launch(intent, options)
+            }
         }
         updateQuestion()
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -140,7 +160,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkAnswer(userAnswer: Boolean){
         val correctAnswer = quizViewModel.currentQuestionAnswer
         val messageResId = when {
-            quizViewModel.isCheater -> {
+            quizViewModel.isCheater < 3 -> {
                 quizViewModel.saveAnswerUser(-1)
                 R.string.judgment_toast
             }
@@ -155,6 +175,10 @@ class MainActivity : AppCompatActivity() {
 
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateTextView(textView: TextView, text: String) {
+        textView.append(text)
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
