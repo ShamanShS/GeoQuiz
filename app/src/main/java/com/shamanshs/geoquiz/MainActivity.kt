@@ -1,6 +1,9 @@
 package com.shamanshs.geoquiz
 
+import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.shamanshs.geoquiz.QuizViewModel.QuizViewModel
 import com.shamanshs.geoquiz.QuizViewModel.QuizViewModelFactory
@@ -39,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+//    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate(Bundle?) called")
@@ -82,10 +86,12 @@ class MainActivity : AppCompatActivity() {
             quizViewModel.moveToBack()
             updateQuestion()
         }
-        cheatButton.setOnClickListener{
+        cheatButton.setOnClickListener{ view: View ->
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
-            getResult.launch(intent)
+            val options = ActivityOptionsCompat.makeClipRevealAnimation(view, 0, 0, view.width, view.height)
+//            if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.M) проверка на версию SDK
+            getResult.launch(intent, options)
         }
         updateQuestion()
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

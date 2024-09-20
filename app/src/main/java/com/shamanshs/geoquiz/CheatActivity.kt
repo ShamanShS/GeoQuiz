@@ -3,6 +3,7 @@ package com.shamanshs.geoquiz
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -20,15 +21,18 @@ class CheatActivity : AppCompatActivity() {
 
     private lateinit var showAnswerButton: Button
     private lateinit var answerTextView: TextView
+    private lateinit var sdk_text_view: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_cheat)
-
+        sdk_text_view = findViewById(R.id.sdk_textView)
         answerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false)
         answerTextView = findViewById(R.id.answer_text_view)
         showAnswerButton = findViewById(R.id.show_answer_button)
+
+        sdk_text_view.append(Build.VERSION.SDK_INT.toString() + " SDK version")
 
         showAnswerButton.setOnClickListener{
             val answerText = when {
