@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private val getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if(result.resultCode == RESULT_OK) {
-            quizViewModel.isCheater =
+            quizViewModel.isCheater[quizViewModel.currentIndex] =
                 result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
         }
     }
@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkAnswer(userAnswer: Boolean){
         val correctAnswer = quizViewModel.currentQuestionAnswer
         val messageResId = when {
-            quizViewModel.isCheater -> {
+            quizViewModel.isCheater[quizViewModel.currentIndex] -> {
                 quizViewModel.saveAnswerUser(-1)
                 R.string.judgment_toast
             }
